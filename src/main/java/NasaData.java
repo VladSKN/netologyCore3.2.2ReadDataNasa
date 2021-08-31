@@ -1,5 +1,6 @@
 public class NasaData {
 
+    private String copyright;
     private String date;
     private String explanation;
     private String hdurl;
@@ -11,7 +12,8 @@ public class NasaData {
     @Override
     public String toString() {
         return "NasaData{" +
-                "date='" + date + '\'' +
+                "copyright='" + copyright + '\'' +
+                ", date='" + date + '\'' +
                 ", explanation='" + explanation + '\'' +
                 ", hdurl='" + hdurl + '\'' +
                 ", media_type='" + media_type + '\'' +
@@ -23,6 +25,14 @@ public class NasaData {
 
     public String getDate() {
         return date;
+    }
+
+    public String getCopyright() {
+        return copyright;
+    }
+
+    public void setCopyright(String copyright) {
+        this.copyright = copyright;
     }
 
     public void setDate(String copyright) {

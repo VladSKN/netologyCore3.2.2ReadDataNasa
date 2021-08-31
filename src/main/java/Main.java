@@ -15,18 +15,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        jsonToObject("https://api.nasa.gov/planetary/apod?api_key=SdF2r9RoBQ1zRNfmyF58kLelb7Xm6KT4qZvsECBB");
-    }
+    private static final CloseableHttpClient httpClient;
 
-    public static void jsonToObject(String url) throws IOException {
-        CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setDefaultRequestConfig(RequestConfig.custom()
+    static {
+        httpClient = HttpClientBuilder.create().setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectTimeout(5000)    // максимальное время ожидание подключения к серверу
                         .setSocketTimeout(30000)    // максимальное время ожидания получения данных
                         .setRedirectsEnabled(false) // возможность следовать редиректу в ответе
                         .build())
                 .build();
+    }
+
+    public static void main(String[] args) throws IOException {
+        jsonToObject("https://api.nasa.gov/planetary/apod?api_key=SdF2r9RoBQ1zRNfmyF58kLelb7Xm6KT4qZvsECBB");
+
+    }
+
+    public static void jsonToObject(String url) throws IOException {
         HttpGet request = new HttpGet(url);
         CloseableHttpResponse response = httpClient.execute(request);
         String responseJSON = EntityUtils.toString(response.getEntity());
@@ -50,19 +55,12 @@ public class Main {
     }
 
     public static void writeFile(NasaData nasaData) throws IOException {
-        CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectTimeout(5000)    // максимальное время ожидание подключения к серверу
-                        .setSocketTimeout(30000)    // максимальное время ожидания получения данных
-                        .setRedirectsEnabled(false) // возможность следовать редиректу в ответе
-                        .build())
-                .build();
         HttpGet request = new HttpGet(nasaData.getUrl());
         CloseableHttpResponse response = httpClient.execute(request);
         String[] mas = nasaData.getUrl().split("/");
         File file = new File(mas[6]);
         createFile(file);
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();){
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();) {
             BufferedImage bufferedImage = ImageIO.read(response.getEntity().getContent());
             ImageIO.write(bufferedImage, "jpg", baos);
             baos.flush();
